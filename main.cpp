@@ -11,6 +11,8 @@ vector<vector<int>> circular_convolution(vector<vector<int>> x, vector<vector<in
 
 void print_2d_array(const vector<vector<int>> &array);
 
+void menu();
+
 enum
 {
     PHYSICAL,
@@ -19,24 +21,80 @@ enum
 
 int main()
 {
-    vector<vector<int>> x = {
-        {1},
-        {2},
-        {3}
-        };
+    int number;
+    bool coordinate_system = PHYSICAL;
+    int rows_amount;
+    int elements_amount;
+    cout << "Enter amount of rows in x matrix: " << endl;;
+    cin >> rows_amount;
+    cout << "Enter amount of elements in x matrix: " << endl;;
+    cin >> elements_amount;
 
-    vector<vector<int>> h = {
-        {3,0,2,1},
-        {-1,2,4,5}
-        };
+    vector<vector<int>> x(rows_amount, vector<int>(elements_amount));
 
-    try {
-        print_2d_array(linear_convolution(x, h, PHYSICAL));
+    for (int i = 0; i < rows_amount; ++i) {
+        cout << "Enter elements for row #" << i + 1 << ": ";
+        for (int j = 0; j < elements_amount; ++j) {
+            cin >> x[i][j];
+        }
     }
-    catch (const runtime_error &e) {
-        cout << "Error: " << e.what() << endl;
+
+
+    cout << "Enter amount of rows in h matrix: " << endl;;
+    cin >> rows_amount;
+    cout << "Enter amount of elements in h matrix: " << endl;;
+    cin >> elements_amount;
+
+    vector<vector<int>> h(rows_amount, vector<int>(elements_amount));
+
+    for (int i = 0; i < rows_amount; ++i) {
+        cout << "Enter elements for row #" << i + 1 << ": ";
+        for (int j = 0; j < elements_amount; ++j) {
+            cin >> h[i][j];
+        }
     }
+
+    cout << "Select coordinate system (0 for physical, 1 for algebratic)" << endl;
+    cin >> coordinate_system;
+
+    while (1){
+        menu();
+
+        cout << ":> ";
+        cin >> number;
+
+
+        if (number == 0) {
+            break;
+        }
+        if (number == 1) {
+            cout << "Result:" << endl;
+            print_2d_array(linear_convolution(x, h, coordinate_system));
+        }
+        if (number == 2) {
+        try {
+            cout << "Result:" << endl;
+            print_2d_array(circular_convolution(x, h, coordinate_system));
+        } 
+        catch (const runtime_error &e) {
+            cout << "Error: " << e.what() << endl;
+        }
+        }
+        if (number == 3) {
+            cout << "Select new coordinate system (0 for physical, 1 for algebratic): ";
+            cin >> coordinate_system;
+        }
+    }
+
+
     return 0;
+}
+
+void menu() {
+    cout << "1. Linear convultion" << endl;
+    cout << "2. Circular convultion" << endl;
+    cout << "3. Change coordinates system" << endl;
+    cout << "0. Exit" << endl;
 }
 
 vector<vector<int>> linear_convolution(vector<vector<int>> x, vector<vector<int>> h, bool coordinate_system)
@@ -96,6 +154,7 @@ vector<vector<int>> circular_convolution(vector<vector<int>> x, vector<vector<in
 
     for (auto &row : h) { reverse(row.begin(), row.end()); }
     reverse(x.begin(), x.end());
+    
     for (int i = offset; i < rows + offset; i++) {
         for (int j = offset; j < cols + offset; j++) {
             array[i][j] = h[i - offset][j - offset];
