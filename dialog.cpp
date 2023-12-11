@@ -38,7 +38,9 @@ void Dialog::linear_convolution() {
 
     result = Signal::linear_convolution(x, h);
 
+    cout << endl;
     Signal::print_vector(result, 'y');
+    cout << endl;
 }
 
 void Dialog::circular_convolution() {
@@ -52,7 +54,9 @@ void Dialog::circular_convolution() {
         cout << "Error: " << e.what() << endl;
     }
     if (!result.empty()) {
+        cout << endl;
         Signal::print_vector(result, 'y');
+        cout << endl;
     }
 }
 
@@ -63,5 +67,24 @@ void Dialog::median_filtering() {
     int A = read_int("Enter A: ");
     int amount = read_int("Enter number of repetitions: ");
 
-    Signal::median_filtering(x, A, amount);
+    for (size_t i = 0; i < x.size(); i++) {
+        cout << setw(4) << " ";
+    }
+
+    cout << endl << "   i    ";
+
+    for (size_t i = 0; i < x.size(); i++) {
+        cout << setw(4) << i;
+    }
+
+    cout << endl;
+
+    Signal::print_vector(x, 'U');
+    
+    for (int i = 0; i < amount; i++) {
+        x = Signal::median_filtering(x, A);
+        Signal::print_vector(x, 'y');
+    }
+    
+    cout << endl;
 }

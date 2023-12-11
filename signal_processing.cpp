@@ -138,39 +138,26 @@ vector<double> Signal::circular_convolution(vector<double> &x, vector<double> &h
     return result[0];
 }
 
-vector<double> Signal::median_filtering(vector<double> &x, int A, int amount) {
+vector<double> Signal::median_filtering(vector<double> &x, int A) {
     vector<double> temp;
+    vector<double> vector;
     double value;
     for (size_t i = 0; i < x.size(); i++) {
-        cout << setw(4) << " ";
-    }
-    cout << endl << "   i    ";
-    for (size_t i = 0; i < x.size(); i++) {
-        cout << setw(4) << i;
-    }
-    cout << endl;
-    print_vector(x, 'U');
-    for (int n = 0; n < amount; n++) {
-        vector<double> vector;
-        for (size_t i = 0; i < x.size(); i++) {
-            temp.clear();
-            for (size_t j = 0; static_cast<int>(j) < A; j++) {
-                if (i + j - floor(A / 2) >= 0 && i + j <= x.size()) {
-                    temp.push_back(x[i + j - floor(A / 2)]);
-                }
+        temp.clear();
+        for (size_t j = 0; static_cast<int>(j) < A; j++) {
+            if (i + j - floor(A / 2) >= 0 && i + j <= x.size()) {
+                temp.push_back(x[i + j - floor(A / 2)]);
             }
-            sort(temp.begin(), temp.end());
-            if (temp.size() % 2 == 0) {
-                value = (temp[temp.size() / 2 - 1] + temp[temp.size() / 2]) / 2;
-            } else {
-                value = temp[int(temp.size() / 2)];
-            }
-            vector.push_back(value);
         }
-        x = vector;
-        print_vector(x, 'y');
+        sort(temp.begin(), temp.end());
+        if (temp.size() % 2 == 0) {
+            value = (temp[temp.size() / 2 - 1] + temp[temp.size() / 2]) / 2;
+        } else {
+            value = temp[int(temp.size() / 2)];
+        }
+        vector.push_back(value);
     }
-    return x;
+    return vector;
 }
 
 void Signal::print_2d_vector(const vector<vector<double>> &vector, char name, bool system) {
