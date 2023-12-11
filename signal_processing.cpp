@@ -138,7 +138,7 @@ vector<double> Signal::circular_convolution(vector<double> &x, vector<double> &h
     return result[0];
 }
 
-void Signal::median_filtering(vector<double> &x, int A, int amount) {
+vector<double> Signal::median_filtering(vector<double> &x, int A, int amount) {
     vector<double> temp;
     double value;
     for (size_t i = 0; i < x.size(); i++) {
@@ -167,9 +167,10 @@ void Signal::median_filtering(vector<double> &x, int A, int amount) {
             }
             vector.push_back(value);
         }
-        print_vector(vector, 'y');
         x = vector;
+        print_vector(x, 'y');
     }
+    return x;
 }
 
 void Signal::print_2d_vector(const vector<vector<double>> &vector, char name, bool system) {

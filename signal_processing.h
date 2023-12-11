@@ -16,7 +16,7 @@ namespace Signal {
 
     void print_vector(const vector<double> &vector, char name);
 
-    void median_filtering(vector<double> &x, int A, int amount);
+    vector<double> median_filtering(vector<double> &x, int A, int amount);
 }
 
 
