@@ -2,6 +2,8 @@
 
 using namespace std;
 
+void Signal::print_2d_vector(const vector<vector<double>> &vector, char name, bool system);
+
 vector<vector<double>> Signal::linear_convolution_2d(vector<vector<double>> &x, vector<vector<double>> &h, bool system) {
     int x_rows = x.size();
     int x_cols = x[0].size();
@@ -10,7 +12,7 @@ vector<vector<double>> Signal::linear_convolution_2d(vector<vector<double>> &x, 
     int offset = hCols + hRows;
 
     vector<vector<double>> result(x_rows + hRows - 1, vector<double>(x_cols + hCols - 1, 0));
-    vector<vector<double>> array(offset * 2, vector<double>(offset * 3, 0));
+    vector<vector<double>> array(offset * 3, vector<double>(offset * 3, 0));
 
     for (auto &row : h) { reverse(row.begin(), row.end()); }
     reverse(x.begin(), x.end());
@@ -37,19 +39,20 @@ vector<vector<double>> Signal::linear_convolution_2d(vector<vector<double>> &x, 
     {
         reverse(result.begin(), result.end());
     }
+
     return result;
 }
 
 vector<double> Signal::linear_convolution(vector<double> &x, vector<double> &h) {
     vector<vector<double>> x_vector(1, vector<double>(x.size(), 0));
     vector<vector<double>> h_vector(1, vector<double>(h.size(), 0));
-    vector<vector<double>> result(1, vector<double>(h.size(), 0));
+    vector<vector<double>> result(1, vector<double>(h.size() + x.size() - 1, 0));
 
     for (size_t i = 0; i < x.size(); i++) {
         x_vector[0][i] = x[i];
         h_vector[0][i] = h[i];
     }
-    result = Signal::linear_convolution_2d(x_vector, h_vector, PHYSICAL);
+    result = Signal::linear_convolution_2d(x_vector, h_vector, ALGEBRAIC);
 
     return result[0];
 }
@@ -66,7 +69,7 @@ vector<vector<double>> Signal::circular_convolution_2d(vector<vector<double>> &x
     }
 
     vector<vector<double>> result(rows, vector<double>(cols, 0));
-    vector<vector<double>> array(offset * 2, vector<double>(offset * 3, 0));
+    vector<vector<double>> array(offset * 3, vector<double>(offset * 3, 0));
 
     for (auto &row: h) { reverse(row.begin(), row.end()); }
     reverse(x.begin(), x.end());
@@ -77,17 +80,25 @@ vector<vector<double>> Signal::circular_convolution_2d(vector<vector<double>> &x
         }
     }
 
-    for (int i = 0; i < offset; ++i) {
+    for (int i = 0; i < 2 * offset; ++i) {
         for (int j = 0; j < 2 * offset; ++j) {
-            array[i + offset][j + offset] = h[i % rows][j % cols];
-            array[-i + offset][j + offset] = h[i % rows][j % cols];
+            if (j + offset < 3 * offset) {
+                if (i + offset < 3 * offset) {
+                    array[i + offset][j + offset] = h[i % rows][j % cols];
+                }
+                if (-i + offset >= 0) {
+                    array[-i + offset][j + offset] = h[i % rows][j % cols];
+                }
+            }
         }
     }
 
-    for (int i = 0; i < offset; ++i) {
+    for (int i = 0; i < 2 * offset; ++i) {
         for (int j = 0; j < 2 * offset; ++j) {
             if (offset - j >= 0) {
-                array[i + offset][offset - j] = array[i + offset][offset + cols - j];
+                if (offset + i < 3 * offset) {
+                    array[i + offset][offset - j] = array[i + offset][offset + cols - j];
+                }
                 if (offset - i >= 0) {
                     array[offset - i][offset - j] = array[i + offset][offset + cols - j];
                 }
@@ -122,7 +133,7 @@ vector<double> Signal::circular_convolution(vector<double> &x, vector<double> &h
         x_vector[0][i] = x[i];
         h_vector[0][i] = h[i];
     }
-    result = Signal::circular_convolution_2d(x_vector, h_vector, PHYSICAL);
+    result = Signal::circular_convolution_2d(x_vector, h_vector, ALGEBRAIC);
 
     return result[0];
 }

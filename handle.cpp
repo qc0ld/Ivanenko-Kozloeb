@@ -5,15 +5,16 @@ using namespace std;
 
 bool read_system() {
     cout << "Enter coordinate system (0 - Physical, 1 - Algebraic): ";
-    bool system = read_int("");
+    int system = read_int("");
     while (1) {
         if (system == 1 || system == 0) {
             break;
         } else {
-            cout << "Enter correct number (1 - Physical, 2 - Algebraic): ";
+            cout << "Enter correct number (0 - Physical, 1 - Algebraic): ";
+            system = read_int("");
         }
     }
-    return system;
+    return static_cast<bool>(system);
 }
 
 int read_menu() {
@@ -23,13 +24,14 @@ int read_menu() {
             break;
         } else {
             cout << "Enter correct number: ";
+            number = read_int("");
         }
     }
     return number;
 }
 
 bool is_number(const string &s) {
-    std::istringstream iss(s);
+    istringstream iss(s);
     double number;
     iss >> number;
     return !iss.fail() && iss.eof();
@@ -64,7 +66,7 @@ vector<double> read_vector(char name) {
 vector<vector<double>> read_matrix(char name) {
     cout << "Enter amount of rows in " << name << " matrix: ";
     int rows_amount = read_int("");
-    cout << "Enter amount of elements in a row in matrix " << name << ": ";
+    cout << "Enter amount of elements in a row: ";
     int elements_amount = read_int("");
 
     vector<vector<double>> x(rows_amount, vector<double>(elements_amount));
